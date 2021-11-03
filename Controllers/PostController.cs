@@ -19,6 +19,7 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpGet]
+        [Route("/{id}")]
         public Post GetPost(int id)
         {
             return new();
@@ -31,24 +32,28 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpGet]
+        [Route("/{id}/comments")]
         public Post GetComments(int id)
         {
             return new();
         }
 
         [HttpPost]
+        [Route("/{id}/comment")]
         public Post Comment(int id, Comment comment)
         {
             return new();
         }
 
         [HttpPost]
+        [Route("/{id}/vote")]
         public Post Vote(int id, Vote vote)
         {
             return new();
         }
 
         [HttpPost]
+        [Route("/{id}/comments/accept")]
         public Post AcceptComment(int id, int commentId)
         {
             return new();
