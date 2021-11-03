@@ -4,17 +4,54 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StackUnderflow.Entities;
 
 namespace StackUnderflow.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("posts")]
     public class PostController : ControllerBase
     {
         [HttpGet]
-        public string Get()
+        public IEnumerable<Post> GetPosts()
         {
-            return "hallo";
+            return new List<Post>{new()};
+        }
+
+        [HttpGet]
+        public Post GetPost(int id)
+        {
+            return new();
+        }
+
+        [HttpPost]
+        public Post CreatePost(Post post)
+        {
+            return new();
+        }
+
+        [HttpGet]
+        public Post GetComments(int id)
+        {
+            return new();
+        }
+
+        [HttpPost]
+        public Post Comment(int id, Comment comment)
+        {
+            return new();
+        }
+
+        [HttpPost]
+        public Post Vote(int id, Vote vote)
+        {
+            return new();
+        }
+
+        [HttpPost]
+        public Post AcceptComment(int id, int commentId)
+        {
+            return new();
         }
     }
 }
