@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using StackUnderflow.Entities;
 
 namespace StackUnderflow
 {
@@ -13,6 +14,10 @@ namespace StackUnderflow
     {
         public static void Main(string[] args)
         {
+            using (var context = new StackUnderflowContext())
+            {
+                Console.WriteLine(context.Posts.Count());
+            }
             CreateHostBuilder(args).Build().Run();
         }
 
