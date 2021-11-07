@@ -19,11 +19,17 @@ namespace StackUnderflow.Controllers
             return string.Empty;
         }
 
+        /*
         [HttpPost]
         [Route("/register")]
-        public string Register(User user)
+        public async Task<IActionResult> Register([FromBody] User user)
         {
-            return string.Empty;
+            if (ModelState.IsValid)
+            {
+
+            }
+
         }
+        */
     }
 }
