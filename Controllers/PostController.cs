@@ -57,18 +57,20 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePost(Post post, string username)
+        public IActionResult CreatePost(Post post)
         {
             using (var db = new StackUnderflowContext())
             {
-                var userObj = db.Users
+                /*var userObj = db.Users
                     .Where(u => u.Username == username)
                     .FirstOrDefault();
 
                 if (userObj == null)
                 {
                     return Problem();
-                }
+                }*/
+
+                post.Creator = new User() { Id = 1, Username = "admin", Password = "123" };
 
                 post.TimeStamp = DateTime.Now;
                 db.Posts.Add(post);
@@ -86,7 +88,7 @@ namespace StackUnderflow.Controllers
         {
             using (var db = new StackUnderflowContext())
             {
-                var posts = db.Posts
+                /*var posts = db.Posts
                     .Where(posts => posts.Id == id);
 
                 var comments = posts
@@ -95,9 +97,9 @@ namespace StackUnderflow.Controllers
                 if (comments == null)
                 {
                     return Problem();
-                }
+                }*/
 
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(comments);
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject("");
 
                 return Ok(json);
             }
