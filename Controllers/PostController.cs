@@ -59,15 +59,7 @@ namespace StackUnderflow.Controllers
         {
             using (var db = new StackUnderflowContext())
             {
-                var userObj = db.Users
-                    .Where(u => u.Username == username)
-                    .FirstOrDefault();
-
-                if (userObj == null)
-                {
-                    return Problem();
-                }
-
+                
                 post.TimeStamp = DateTime.Now;
                 db.Posts.Add(post);
                 db.SaveChangesAsync();
@@ -106,15 +98,7 @@ namespace StackUnderflow.Controllers
         {
             using (var db = new StackUnderflowContext())
             {
-                var userObj = db.Users
-                    .Where(u => u.Username == username)
-                    .FirstOrDefault();
-
-                if (userObj == null)
-                {
-                    return Problem();
-                }
-
+               
                 comment.TiemeStamp = DateTime.Now;
                 db.Comments.Add(comment);
                 db.SaveChangesAsync();
