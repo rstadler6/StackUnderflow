@@ -34,7 +34,10 @@ namespace StackUnderflow
         {
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
 
-            services.AddDbContext<StackUnderflowContext>();
+            services.AddDbContext<StackUnderflowContext>(options =>
+                options.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection")
+                ));
 
             services.AddAuthentication(options =>
                 {
