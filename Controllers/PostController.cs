@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Cors;
 using StackUnderflow.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace StackUnderflow.Controllers
 {
     [ApiController]
     [Route("posts")]
+    [EnableCors("CorsPolicy")]
     public class PostController : ControllerBase
     {
         [HttpGet]
