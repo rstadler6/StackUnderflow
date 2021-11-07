@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using StackUnderflow.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace StackUnderflow.Controllers
 {
@@ -87,10 +88,11 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var posts = db.Posts
-                    .Where(posts => posts.Id == id);
+                    .Include(p => p.Comments)
+                    .Where(p => p.Id == id)
+                    .FirstOrDefault();
 
-                var comments = posts
-
+                var comments = posts.Comments;
 
                 if (comments == null)
                 {
@@ -130,16 +132,45 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("/{id}/vote")]
-        public Post Vote(int id, Vote vote)
+        public IActionResult Vote(int id, Vote vote)
         {
-            return new();
+            using (var db = new StackUnderflowContext())
+            {
+             
+                
+                db.Votes.Add(vote);
+                db.SaveChangesAsync();
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(vote);
+
+            return Ok(json);
         }
 
         [HttpPost]
         [Route("/{id}/comments/accept")]
-        public Post AcceptComment(int id, int commentId)
+        public IActionResult AcceptComment(int id, int commentId)
         {
-            return new();
+            using (var db = new StackUnderflowContext())
+            {
+                var posts = db.Posts
+                    .Include(p => p.Comments)
+                    .Where(p => p.Id == id)
+                    .FirstOrDefault();
+
+                if (userObj == null)
+                {
+                    return Problem();
+                }
+
+                comment.TiemeStamp = DateTime.Now;
+                db.Comments.Add(comment);
+                db.SaveChangesAsync();
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(comment);
+
+            return Ok(json);
         }
     }
 }
