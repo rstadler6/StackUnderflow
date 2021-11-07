@@ -16,11 +16,21 @@ namespace StackUnderflow.Controllers
         
 
         [HttpGet]
-        public IEnumerable<Post> GetPosts()
+        public ActionResult<Post> GetPosts()
         {
             using (var db = new StackUnderflowContext())
             {
-                return new List<Post> {new() };
+                var posts = db.Posts;
+
+
+                if (posts == null)
+                {
+                    return Problem();
+                }
+
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
+
+                return Ok(json);
             }
             
         }
@@ -47,16 +57,50 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpPost]
-        public Post CreatePost(Post post)
+        public IActionResult CreatePost(Post post, string username)
         {
-            return new();
+            using (var db = new StackUnderflowContext())
+            {
+                var userObj = db.Users
+                    .Where(u => u.Username == username)
+                    .FirstOrDefault();
+
+                if (userObj == null)
+                {
+                    return Problem();
+                }
+
+                post.TimeStamp = DateTime.Now;
+                db.Posts.Add(post);
+                db.SaveChangesAsync();
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(post);
+
+            return Ok(json);
         }
 
         [HttpGet]
         [Route("/{id}/comments")]
-        public Post GetComments(int id)
+        public ActionResult<Comment> GetComments(int id)
         {
-            return new();
+            using (var db = new StackUnderflowContext())
+            {
+                var posts = db.Posts
+                    .Where(posts => posts.Id == id);
+
+                var comments = posts
+
+
+                if (comments == null)
+                {
+                    return Problem();
+                }
+
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(comments);
+
+                return Ok(json);
+            }
         }
 
         [HttpPost]
