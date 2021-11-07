@@ -29,9 +29,7 @@ namespace StackUnderflow.Controllers
                     return Problem();
                 }
 
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(posts);
-
-                return Ok(json);
+                return Ok(posts);
             }
             
         }
@@ -51,9 +49,8 @@ namespace StackUnderflow.Controllers
                     return Problem();
                 }
 
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(post);
 
-                return Ok(json);
+                return Ok(post);
             }
         }
 
@@ -76,9 +73,8 @@ namespace StackUnderflow.Controllers
                 db.SaveChangesAsync();
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(post);
 
-            return Ok(json);
+            return Ok(post);
         }
 
         [HttpGet]
@@ -99,9 +95,8 @@ namespace StackUnderflow.Controllers
                     return Problem();
                 }
 
-                var json = Newtonsoft.Json.JsonConvert.SerializeObject(comments);
 
-                return Ok(json);
+                return Ok(comments);
             }
         }
 
@@ -125,9 +120,7 @@ namespace StackUnderflow.Controllers
                 db.SaveChangesAsync();
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(comment);
-
-            return Ok(json);
+            return Ok(comment);
         }
 
         [HttpPost]
@@ -137,14 +130,16 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
              
-                
-                db.Votes.Add(vote);
+                var comment = db.Comments
+                .Include(c => c.Votes)
+                .Where(c => c.Id == id)
+                .FirstOrDefault();
+
+                comment.Votes.Add(vote);
                 db.SaveChangesAsync();
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(vote);
-
-            return Ok(json);
+            return Ok(vote);
         }
 
         [HttpPost]
@@ -154,23 +149,20 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var posts = db.Posts
-                    .Include(p => p.Comments)
                     .Where(p => p.Id == id)
+                    .Include(p => p.Comments)
                     .FirstOrDefault();
-
-                if (userObj == null)
-                {
-                    return Problem();
-                }
-
-                comment.TiemeStamp = DateTime.Now;
-                db.Comments.Add(comment);
+                
+                var comment = posts.Comments
+                    .Where(c => c.Id == commentId)
+                    .FirstOrDefault();
+                
+                posts.AcceptedComment = comment;
                 db.SaveChangesAsync();
+
+                return Ok(comment);
             }
 
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(comment);
-
-            return Ok(json);
         }
     }
 }
