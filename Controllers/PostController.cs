@@ -12,17 +12,38 @@ namespace StackUnderflow.Controllers
     [Route("posts")]
     public class PostController : ControllerBase
     {
+
+        
+
         [HttpGet]
         public IEnumerable<Post> GetPosts()
         {
-            return new List<Post>{new()};
+            using (var db = new StackUnderflowContext())
+            {
+                return new List<Post> {new() };
+            }
+            
         }
 
         [HttpGet]
         [Route("/{id}")]
-        public Post GetPost(int id)
+        public IActionResult GetPost(int id)
         {
-            return new();
+            using (var db = new StackUnderflowContext())
+            {
+                var post = db.Posts
+                    .Where(post => post.Id == id)
+                    .FirstOrDefault();
+
+                if (post == null)
+                {
+                    return Problem();
+                }
+
+                var json = Newtonsoft.Json.JsonConvert.SerializeObject(post);
+
+                return Ok(json);
+            }
         }
 
         [HttpPost]
