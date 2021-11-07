@@ -18,6 +18,7 @@ namespace StackUnderflow
             {
                 Console.WriteLine(context.Posts.Count());
             }
+
             CreateHostBuilder(args).Build().Run();
         }
 
