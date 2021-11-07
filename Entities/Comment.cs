@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System;
+
 
 namespace StackUnderflow.Entities
 {
@@ -8,5 +10,6 @@ namespace StackUnderflow.Entities
         public string Content { get; set; }
         public User Creator { get; set; }
         public List<Vote> Votes { get; set; }
+        public DateTime TiemeStamp { get; set; }
     }
 }

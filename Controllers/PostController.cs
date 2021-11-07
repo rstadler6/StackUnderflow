@@ -105,9 +105,27 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("/{id}/comment")]
-        public Post Comment(int id, Comment comment)
+        public IActionResult Comment(int id, Comment comment, string username)
         {
-            return new();
+            using (var db = new StackUnderflowContext())
+            {
+                var userObj = db.Users
+                    .Where(u => u.Username == username)
+                    .FirstOrDefault();
+
+                if (userObj == null)
+                {
+                    return Problem();
+                }
+
+                comment.TiemeStamp = DateTime.Now;
+                db.Comments.Add(comment);
+                db.SaveChangesAsync();
+            }
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(comment);
+
+            return Ok(json);
         }
 
         [HttpPost]
