@@ -13,9 +13,6 @@ namespace StackUnderflow.Controllers
     [Route("posts")]
     public class PostController : ControllerBase
     {
-
-        
-
         [HttpGet]
         public ActionResult<Post> GetPosts()
         {
