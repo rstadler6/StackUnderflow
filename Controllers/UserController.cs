@@ -35,7 +35,7 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("/login")]
-        public string Login(User user)
+        public Task<IActionResult> Login([FromBody] UserLoginRequest userLoginRequest)
         {
             return string.Empty;
         }
