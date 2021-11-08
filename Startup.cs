@@ -59,8 +59,8 @@ namespace StackUnderflow
                     };
                 });
 
-            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-             //           .AddEntityFrameworkStores<StackUnderflowContext>();
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                        .AddEntityFrameworkStores<StackUnderflowContext>();
 
            
             services.AddControllers();
