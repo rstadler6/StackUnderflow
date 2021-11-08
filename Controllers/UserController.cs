@@ -40,7 +40,8 @@ namespace StackUnderflow.Controllers
                 {
                     return BadRequest(new RegistrationResponse()
                     {
-                        ErrorList = new List<string>() {
+                        ErrorList = new List<string>() 
+                        {
                             "Invalid login request"
                         },
                         Success = false
@@ -70,7 +71,8 @@ namespace StackUnderflow.Controllers
                 {
                     return BadRequest(new RegistrationResponse()
                     {
-                        ErrorList = new List<string>() {
+                        ErrorList = new List<string>()
+                        {
                             "User already exists"
                         },
                         Success = false
