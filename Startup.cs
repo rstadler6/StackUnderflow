@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using StackUnderflow.Configuration;
 using StackUnderflow.Entities;
 
+
 namespace StackUnderflow
 {
     public class Startup
@@ -58,7 +59,10 @@ namespace StackUnderflow
                     };
                 });
 
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+             //           .AddEntityFrameworkStores<StackUnderflowContext>();
 
+           
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
