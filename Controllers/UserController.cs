@@ -78,7 +78,7 @@ namespace StackUnderflow.Controllers
                 }
 
                 db.Users.Add(user);
-                var jwtToken = GenerateJwtToken(existingUser);
+                var jwtToken = GenerateJwtToken(user);
 
                 return Ok(new RegistrationResponse()
                 {
