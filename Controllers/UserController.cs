@@ -148,8 +148,7 @@ namespace StackUnderflow.Controllers
             {
                 Subject = new ClaimsIdentity(new []
                 {
-                    new Claim("Id", user.Id)
-                    
+                    new Claim(ClaimTypes.NameIdentifier, user.Id)
                 }), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };

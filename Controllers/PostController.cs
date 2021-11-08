@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using StackUnderflow.Entities;
@@ -98,8 +99,16 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var post = db.Posts.Include(post => post.Comments).FirstOrDefault(post => post.Id == id);
+                var user = db.Users.FirstOrDefault(user => user.Id == int.Parse(ClaimTypes.NameIdentifier));
+
+                if (user == null || post == null)
+                {
+                    return Problem();
+                }
 
                 comment.TiemeStamp = DateTime.Now;
+                comment.Creator = user;
+
                 post.Comments.Add(comment);
                 db.SaveChangesAsync();
             }
