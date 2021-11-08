@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using StackUnderflow.Entities;
@@ -34,12 +35,13 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpGet]
-        [Route("/{id}")]
+        [Route("{id}")]
         public IActionResult GetPost(int id)
         {
             using (var db = new StackUnderflowContext())
             {
                 var post = db.Posts
+                    .Include(post => post.Comments)
                     .FirstOrDefault(post => post.Id == id);
 
                 if (post == null)
@@ -68,7 +70,7 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpGet]
-        [Route("/{id}/comments")]
+        [Route("{id}/comments")]
         public ActionResult<Comment> GetComments(int id)
         {
             using (var db = new StackUnderflowContext())
@@ -90,14 +92,15 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpPost]
-        [Route("/{id}/comment")]
-        public IActionResult Comment(int id, Comment comment, string username)
+        [Route("{id}/comment")]
+        public IActionResult Comment(int id, Comment comment)
         {
             using (var db = new StackUnderflowContext())
             {
-               
+                var post = db.Posts.Include(post => post.Comments).FirstOrDefault(post => post.Id == id);
+
                 comment.TiemeStamp = DateTime.Now;
-                db.Comments.Add(comment);
+                post.Comments.Add(comment);
                 db.SaveChangesAsync();
             }
 
@@ -105,12 +108,11 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpPost]
-        [Route("/{id}/vote")]
+        [Route("{id}/vote")]
         public IActionResult Vote(int id, Vote vote)
         {
             using (var db = new StackUnderflowContext())
             {
-             
                 var comment = db.Comments
                     .Include(c => c.Votes)
                     .FirstOrDefault(c => c.Id == id);
@@ -123,7 +125,7 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpPost]
-        [Route("/{id}/comments/accept")]
+        [Route("{id}/comments/accept")]
         public IActionResult AcceptComment(int id, int commentId)
         {
             using (var db = new StackUnderflowContext())
