@@ -62,8 +62,6 @@ namespace StackUnderflow
 
             //services.AddAuthorization(options => { options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build(); });
 
-
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

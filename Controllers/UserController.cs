@@ -22,11 +22,11 @@ namespace StackUnderflow.Controllers
     public class UserController : ControllerBase
     {
 
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly JwtConfig _jwtConfig;
 
         public UserController(
-            UserManager<IdentityUser> userManager, 
+            UserManager<User> userManager, 
             IOptionsMonitor<JwtConfig> optionsMonitor)
         {
             _userManager = userManager;
@@ -106,7 +106,7 @@ namespace StackUnderflow.Controllers
                     });
                 }
 
-                var newUser = new IdentityUser() { UserName = user.Username };
+                var newUser = new User() { Username = user.Username };
                 var isCreated = await _userManager.CreateAsync(newUser, user.Password);
 
                 if(isCreated.Succeeded)
@@ -138,7 +138,7 @@ namespace StackUnderflow.Controllers
             });
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+        private string GenerateJwtToken(User user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
@@ -148,7 +148,7 @@ namespace StackUnderflow.Controllers
             {
                 Subject = new ClaimsIdentity(new []
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
+                    new Claim(ClaimTypes.NameIdentifier, user.Username)
                 }), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
