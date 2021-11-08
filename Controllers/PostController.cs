@@ -14,8 +14,8 @@ using Microsoft.EntityFrameworkCore;
 namespace StackUnderflow.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("posts")]
+    [Authorize]
     [EnableCors("CorsPolicy")]
     public class PostController : ControllerBase
     {
@@ -73,6 +73,7 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("{id}/comments")]
         public ActionResult<Comment> GetComments(int id)
         {
@@ -101,7 +102,7 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var post = db.Posts.Include(post => post.Comments).FirstOrDefault(post => post.Id == id);
-                var user = db.Users.FirstOrDefault(user => user.Id == int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "id").Value));
+                var user = db.Users.FirstOrDefault();//user => user.Username == HttpContext.User.Claims.First().Value);
 
                 if (user == null || post == null)
                 {

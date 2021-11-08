@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,6 +93,7 @@ namespace StackUnderflow
 
             app.UseRouting();
             app.UseCors();
+            app.UseJwtTokenMiddleware();
             app.UseAuthentication();
             app.UseAuthorization();
 
