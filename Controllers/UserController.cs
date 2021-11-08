@@ -80,6 +80,7 @@ namespace StackUnderflow.Controllers
                 }
 
                 db.Users.Add(user);
+                db.SaveChangesAsync();
                 var jwtToken = GenerateJwtToken(user);
 
                 return Ok(new RegistrationResponse()
