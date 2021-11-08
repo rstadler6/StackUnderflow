@@ -21,15 +21,10 @@ namespace StackUnderflow.Controllers
     [EnableCors("CorsPolicy")]
     public class UserController : ControllerBase
     {
-
-        private readonly UserManager<User> _userManager;
         private readonly JwtConfig _jwtConfig;
 
-        public UserController(
-            UserManager<User> userManager, 
-            IOptionsMonitor<JwtConfig> optionsMonitor)
+        public UserController (IOptionsMonitor<JwtConfig> optionsMonitor)
         {
-            _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
         }
 
@@ -37,30 +32,17 @@ namespace StackUnderflow.Controllers
         [Route("/login")]
         public async Task<IActionResult> Login([FromBody] User user)
         {
-            if (ModelState.IsValid)
+            using (var db = new StackUnderflowContext())
             {
-                var existingUser = await _userManager.FindByIdAsync(user.Id.ToString());
+                var existingUser = db.Users.FirstOrDefault(u => u.Username == user.Username);
 
-                if (existingUser == null)
+                if (existingUser == null || existingUser.Password != user.Password)
                 {
                     return BadRequest(new RegistrationResponse()
                     {
                         ErrorList = new List<string>() {
-                                "Invalid login request"
-                            },
-                        Success = false
-                    });
-                }
-
-                var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
-
-                if (!isCorrect)
-                {
-                    return BadRequest(new RegistrationResponse()
-                    {
-                        ErrorList = new List<string>() {
-                                "Invalid login request"
-                            },
+                            "Invalid login request"
+                        },
                         Success = false
                     });
                 }
@@ -73,16 +55,6 @@ namespace StackUnderflow.Controllers
                     Token = jwtToken
                 });
             }
-
-            return BadRequest(new RegistrationResponse()
-            {
-                ErrorList = new List<string>() {
-                        "Invalid payload"
-                    },
-                Success = false
-            });
-
-
         }
 
         
@@ -90,52 +62,30 @@ namespace StackUnderflow.Controllers
         [Route("/register")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
-            if (ModelState.IsValid)
+            using (var db = new StackUnderflowContext())
             {
-                var existingUser = await _userManager.FindByNameAsync(user.Username);
+                var existingUser = db.Users.FirstOrDefault(u => u.Username == user.Username);
 
-                if(existingUser != null)
+                if (existingUser != null)
                 {
                     return BadRequest(new RegistrationResponse()
                     {
-                        ErrorList = new List<string>()
-                        {
-                            "Username already in use"
+                        ErrorList = new List<string>() {
+                            "User already exists"
                         },
                         Success = false
                     });
                 }
 
-                var newUser = new User() { Username = user.Username };
-                var isCreated = await _userManager.CreateAsync(newUser, user.Password);
+                db.Users.Add(user);
+                var jwtToken = GenerateJwtToken(existingUser);
 
-                if(isCreated.Succeeded)
+                return Ok(new RegistrationResponse()
                 {
-                    var jwtToken = GenerateJwtToken(newUser);
-
-                    return Ok(new RegistrationResponse()
-                    {
-                        Success = true,
-                        Token = jwtToken
-                    });
-                } else
-                {
-                    return BadRequest(new RegistrationResponse()
-                    {
-                        ErrorList = isCreated.Errors.Select(x => x.Description).ToList(),
-                        Success = false
-                    }) ;
-                }
+                    Success = true,
+                    Token = jwtToken
+                });
             }
-
-            return BadRequest(new RegistrationResponse()
-            {
-                ErrorList = new List<string>()
-                {
-                    "Invalid payload"
-                },
-                Success = false
-            });
         }
 
         private string GenerateJwtToken(User user)
