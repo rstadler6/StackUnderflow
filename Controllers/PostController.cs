@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using StackUnderflow.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 namespace StackUnderflow.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("posts")]
     [EnableCors("CorsPolicy")]
     public class PostController : ControllerBase
@@ -99,7 +101,7 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var post = db.Posts.Include(post => post.Comments).FirstOrDefault(post => post.Id == id);
-                var user = db.Users.FirstOrDefault(user => user.Id == int.Parse(ClaimTypes.NameIdentifier));
+                var user = db.Users.FirstOrDefault(user => user.Id == int.Parse(User.Claims.FirstOrDefault(claim => claim.Type == "id").Value));
 
                 if (user == null || post == null)
                 {
