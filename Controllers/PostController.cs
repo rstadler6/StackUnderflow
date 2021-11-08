@@ -20,10 +20,10 @@ namespace StackUnderflow.Controllers
         {
             using (var db = new StackUnderflowContext())
             {
-                var posts = db.Posts;
+                var posts = db.Posts.ToList();
 
 
-                if (posts == null)
+                if (posts.Count == 0)
                 {
                     return Problem();
                 }
@@ -40,8 +40,7 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var post = db.Posts
-                    .Where(post => post.Id == id)
-                    .FirstOrDefault();
+                    .FirstOrDefault(post => post.Id == id);
 
                 if (post == null)
                 {
@@ -76,8 +75,7 @@ namespace StackUnderflow.Controllers
             {
                 var posts = db.Posts
                     .Include(p => p.Comments)
-                    .Where(p => p.Id == id)
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => p.Id == id);
 
                 var comments = posts.Comments;
 
@@ -114,9 +112,8 @@ namespace StackUnderflow.Controllers
             {
              
                 var comment = db.Comments
-                .Include(c => c.Votes)
-                .Where(c => c.Id == id)
-                .FirstOrDefault();
+                    .Include(c => c.Votes)
+                    .FirstOrDefault(c => c.Id == id);
 
                 comment.Votes.Add(vote);
                 db.SaveChangesAsync();
@@ -132,13 +129,11 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 var posts = db.Posts
-                    .Where(p => p.Id == id)
                     .Include(p => p.Comments)
-                    .FirstOrDefault();
-                
+                    .FirstOrDefault(p => p.Id == id);
+
                 var comment = posts.Comments
-                    .Where(c => c.Id == commentId)
-                    .FirstOrDefault();
+                    .FirstOrDefault(c => c.Id == commentId);
                 
                 posts.AcceptedComment = comment;
                 db.SaveChangesAsync();
