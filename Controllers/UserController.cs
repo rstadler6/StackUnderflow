@@ -30,7 +30,7 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("/login")]
-        public async Task<IActionResult> Login([FromBody] User user)
+        public IActionResult Login([FromBody] User user)
         {
             using (var db = new StackUnderflowContext())
             {
@@ -61,7 +61,7 @@ namespace StackUnderflow.Controllers
         
         [HttpPost]
         [Route("/register")]
-        public async Task<IActionResult> Register([FromBody] User user)
+        public IActionResult Register([FromBody] User user)
         {
             using (var db = new StackUnderflowContext())
             {
