@@ -35,17 +35,17 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("/login")]
-        public Task<IActionResult> Login([FromBody] User user)
+        public async Task<IActionResult> Login([FromBody] User user)
         {
             if (ModelState.IsValid)
             {
-                var existingUser = await _userManager.FindByEmailAsync(user.Email);
+                var existingUser = await _userManager.FindByIdAsync(user.Id.ToString());
 
                 if (existingUser == null)
                 {
                     return BadRequest(new RegistrationResponse()
                     {
-                        Errors = new List<string>() {
+                        ErrorList = new List<string>() {
                                 "Invalid login request"
                             },
                         Success = false
@@ -58,7 +58,7 @@ namespace StackUnderflow.Controllers
                 {
                     return BadRequest(new RegistrationResponse()
                     {
-                        Errors = new List<string>() {
+                        ErrorList = new List<string>() {
                                 "Invalid login request"
                             },
                         Success = false

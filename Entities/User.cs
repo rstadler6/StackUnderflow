@@ -1,4 +1,6 @@
-﻿namespace StackUnderflow.Entities
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace StackUnderflow.Entities
 {
     public class User
     {
