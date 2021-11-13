@@ -93,23 +93,14 @@ namespace StackUnderflow.Controllers
 
         private string GenerateJwtToken(User user)
         {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var token = JWT.Builder.JwtBuilder.Create()
+                      .WithAlgorithm(new JWT.Algorithms.HMACSHA256Algorithm()) // symmetric
+                      .WithSecret(_jwtConfig.Secret)
+                      .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                      .AddClaim("user", user.Username)
+                      .Encode();
 
-            var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new []
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Username)
-                }), 
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-            };
-
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = jwtTokenHandler.WriteToken(token);
-
-            return jwtToken;
+            return token;
         }
         
     }
