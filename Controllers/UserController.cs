@@ -93,26 +93,12 @@ namespace StackUnderflow.Controllers
 
         private string GenerateToken(string username, int expireMinutes = 20)
         {
-            var symmetricKey = Convert.FromBase64String(_jwtConfig.Secret);
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var now = DateTime.UtcNow;
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, username)
-                }),
-
-                Expires = now.AddMinutes(Convert.ToInt32(expireMinutes)),
-
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(symmetricKey),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var stoken = tokenHandler.CreateToken(tokenDescriptor);
-            var token = tokenHandler.WriteToken(stoken);
+            var token = JWT.Builder.JwtBuilder.Create()
+                      .WithAlgorithm(new JWT.Algorithms.HMACSHA256Algorithm()) // symmetric
+                      .WithSecret(_jwtConfig.Secret)
+                      .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
+                      .AddClaim("user", user.Username)
+                      .Encode();
 
             return token;
         }
