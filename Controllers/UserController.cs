@@ -48,7 +48,7 @@ namespace StackUnderflow.Controllers
                     });
                 }
 
-                var jwtToken = GenerateJwtToken(existingUser);
+                var jwtToken = GenerateToken(existingUser.Username);
 
                 return Ok(new RegistrationResponse()
                 {
@@ -81,7 +81,7 @@ namespace StackUnderflow.Controllers
 
                 db.Users.Add(user);
                 db.SaveChangesAsync();
-                var jwtToken = GenerateJwtToken(user);
+                var jwtToken = GenerateToken(user.Username);
 
                 return Ok(new RegistrationResponse()
                 {
@@ -91,26 +91,31 @@ namespace StackUnderflow.Controllers
             }
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateToken(string username, int expireMinutes = 20)
         {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var symmetricKey = Convert.FromBase64String(_jwtConfig.Secret);
+            var tokenHandler = new JwtSecurityTokenHandler();
 
-            var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
-
+            var now = DateTime.UtcNow;
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new []
+                Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Username)
-                }), 
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+                    new Claim(ClaimTypes.NameIdentifier, username)
+                }),
+
+                Expires = now.AddMinutes(Convert.ToInt32(expireMinutes)),
+
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(symmetricKey),
+                    SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-            var jwtToken = jwtTokenHandler.WriteToken(token);
+            var stoken = tokenHandler.CreateToken(tokenDescriptor);
+            var token = tokenHandler.WriteToken(stoken);
 
-            return jwtToken;
+            return token;
         }
-        
+
     }
 }

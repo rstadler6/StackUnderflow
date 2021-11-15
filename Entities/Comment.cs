@@ -11,7 +11,7 @@ namespace StackUnderflow.Entities
         public string Content { get; set; }
         public User Creator { get; set; }
         public List<Vote> Votes { get; set; }
-        public DateTime TiemeStamp { get; set; }
+        public DateTime TimeStamp { get; set; }
 
         public int SumVotes()
         {
