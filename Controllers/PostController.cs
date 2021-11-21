@@ -142,6 +142,26 @@ namespace StackUnderflow.Controllers
             return Ok(vote);
         }
 
+        [HttpGet]
+        [Route("{id}/vote")]
+        public IActionResult GetVotes(int id, Vote vote)
+        {
+            var result = 0;
+
+            using (var db = new StackUnderflowContext())
+            {
+                var user = db.Users.FirstOrDefault(user => user.Id == 1);
+                var comment = db.Comments
+                    .Include(c => c.Votes)
+                    .FirstOrDefault(c => c.Id == id);
+
+                result = 0; // TODO: sum votes
+            }
+
+            return Ok(result);
+        }
+
+
         [HttpPost]
         [Route("{id}/comments/accept")]
         public IActionResult AcceptComment(int id, int commentId)
