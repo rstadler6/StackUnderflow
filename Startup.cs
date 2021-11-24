@@ -39,7 +39,7 @@ namespace StackUnderflow
 
             services.AddDbContext<StackUnderflowContext>();
 
-            services.AddAuthentication(options =>
+            /*services.AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,25 +59,25 @@ namespace StackUnderflow
                         ValidateLifetime = true,
                         RequireExpirationTime = false
                     };
-                });
+                });*/
 
             //services.AddAuthorization(options => { options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build(); });
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "StackUnderflow", Version = "v1"});
-            });
-
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy",
+                options.AddDefaultPolicy(
                     builder =>
                     {
                         builder.AllowAnyOrigin()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
                     });
+            });
+
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "StackUnderflow", Version = "v1"});
             });
         }
 
@@ -93,7 +93,6 @@ namespace StackUnderflow
 
             app.UseRouting();
             app.UseCors();
-            app.UseJwtTokenMiddleware();
             app.UseAuthentication();
             app.UseAuthorization();
 

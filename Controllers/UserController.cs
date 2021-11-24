@@ -18,7 +18,7 @@ namespace StackUnderflow.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [EnableCors("CorsPolicy")]
+    [EnableCors]
     public class UserController : ControllerBase
     {
         private readonly JwtConfig _jwtConfig;
@@ -97,7 +97,7 @@ namespace StackUnderflow.Controllers
                       .WithAlgorithm(new JWT.Algorithms.HMACSHA256Algorithm()) // symmetric
                       .WithSecret(_jwtConfig.Secret)
                       .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds())
-                      .AddClaim("user", user.Username)
+                      .AddClaim("user", username)
                       .Encode();
 
             return token;

@@ -15,7 +15,7 @@ namespace StackUnderflow.Controllers
 {
     [ApiController]
     [Route("posts")]
-    [EnableCors("CorsPolicy")]
+    [EnableCors]
     public class PostController : ControllerBase
     {
         [HttpGet]
