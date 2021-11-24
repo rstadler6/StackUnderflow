@@ -102,9 +102,11 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comment")]
         public IActionResult Comment(int id, Comment comment)
         {
+            Post post;
+
             using (var db = new StackUnderflowContext())
             {
-                var post = db.Posts.Include(post => post.Comments).FirstOrDefault(post => post.Id == id);
+                post = db.Posts.Include(post => post.Comments).ThenInclude(comment => comment.Creator).FirstOrDefault(post => post.Id == id);
                 var user = db.Users.FirstOrDefault(user => user.Id == 1);//user => user.Username == HttpContext.User.Claims.First().Value);
 
                 if (user == null || post == null)
@@ -119,7 +121,7 @@ namespace StackUnderflow.Controllers
                 db.SaveChangesAsync();
             }
 
-            return Ok(comment);
+            return Ok(post);
         }
 
         [HttpPost]
