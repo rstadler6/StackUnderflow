@@ -1,3 +1,5 @@
+using JWT.Algorithms;
+using JWT.Builder;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using StackUnderflow.Configuration;
 using StackUnderflow.Entities;
-
+using System;
 
 namespace StackUnderflow
 {
@@ -49,6 +51,18 @@ namespace StackUnderflow
                 });*/
 
             //services.AddAuthorization(options => { options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build(); });
+
+            const string token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJjbGFpbTEiOjAsImNsYWltMiI6ImNsYWltMi12YWx1ZSJ9.8pwBI_HtXqI3UgQHQ_rDRnSQRxFL1SR8fbQoS-5kM5s";
+            const string secret = "GQDstcKsx0NHjPOuXOYg5MbeJ1XT0uFiwDVvVBrk";
+
+            var json = JwtBuilder.Create()
+                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                     .WithSecret(secret)
+                     .MustVerifySignature()
+                     .Decode(token);
+
+            Console.WriteLine(json);
+
 
             services.AddCors(options =>
             {
