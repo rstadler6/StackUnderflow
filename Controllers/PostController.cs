@@ -146,9 +146,9 @@ namespace StackUnderflow.Controllers
 
         [HttpGet]
         [Route("{id}/vote")]
-        public IActionResult GetVotes(int id, Vote vote)
+        public IActionResult GetVotes(int id)
         {
-            var result = 0;
+            int result;
 
             using (var db = new StackUnderflowContext())
             {
@@ -157,27 +157,27 @@ namespace StackUnderflow.Controllers
                     .Include(c => c.Votes)
                     .FirstOrDefault(c => c.Id == id);
 
-                result = 0; // TODO: sum votes
+                result = comment.SumVotes();
             }
 
             return Ok(result);
         }
 
 
-        [HttpPost]
-        [Route("{id}/comments/accept")]
+        [HttpGet]
+        [Route("{id}/comments/accept/{commentId}")]
         public IActionResult AcceptComment(int id, int commentId)
         {
             using (var db = new StackUnderflowContext())
             {
-                var posts = db.Posts
+                var post = db.Posts
                     .Include(p => p.Comments)
                     .FirstOrDefault(p => p.Id == id);
 
-                var comment = posts.Comments
+                var comment = post.Comments
                     .FirstOrDefault(c => c.Id == commentId);
                 
-                posts.AcceptedComment = comment;
+                post.AcceptedComment = comment;
                 db.SaveChangesAsync();
 
                 return Ok(comment);
