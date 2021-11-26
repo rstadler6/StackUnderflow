@@ -13,7 +13,7 @@ namespace StackUnderflow.Controllers
     public class PostController : ControllerBase
     {
         [HttpGet]
-        public ActionResult<Post> GetPosts()
+        public ActionResult<Post> GetPosts([FromHeader] string token)
         {
             using (var db = new StackUnderflowContext())
             {
@@ -176,7 +176,6 @@ namespace StackUnderflow.Controllers
 
                 return Ok(comment);
             }
-
         }
     }
 }
