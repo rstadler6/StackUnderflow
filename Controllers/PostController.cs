@@ -34,7 +34,7 @@ namespace StackUnderflow.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public IActionResult GetPost(int id)
+        public IActionResult GetPost([FromHeader] string token, int id)
         {
             using (var db = new StackUnderflowContext())
             {
@@ -54,7 +54,7 @@ namespace StackUnderflow.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreatePost(Post post)
+        public IActionResult CreatePost([FromHeader] string token, Post post)
         {
             using (var db = new StackUnderflowContext())
             {
@@ -72,7 +72,7 @@ namespace StackUnderflow.Controllers
 
         [HttpGet]
         [Route("{id}/comments")]
-        public ActionResult<Comment> GetComments(int id)
+        public ActionResult<Comment> GetComments([FromHeader] string token, int id)
         {
             using (var db = new StackUnderflowContext())
             {
@@ -94,7 +94,7 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("{id}/comment")]
-        public IActionResult Comment(int id, Comment comment)
+        public IActionResult Comment([FromHeader] string token, int id, Comment comment)
         {
             Post post;
 
@@ -120,7 +120,7 @@ namespace StackUnderflow.Controllers
 
         [HttpPost]
         [Route("{id}/vote")]
-        public IActionResult Vote(int id, Vote vote)
+        public IActionResult Vote([FromHeader] string token, int id, Vote vote)
         {
             using (var db = new StackUnderflowContext())
             {
@@ -140,7 +140,7 @@ namespace StackUnderflow.Controllers
 
         [HttpGet]
         [Route("{id}/vote")]
-        public IActionResult GetVotes(int id)
+        public IActionResult GetVotes([FromHeader] string token, int id)
         {
             int result;
 
@@ -160,7 +160,7 @@ namespace StackUnderflow.Controllers
 
         [HttpGet]
         [Route("{id}/comments/accept/{commentId}")]
-        public IActionResult AcceptComment(int id, int commentId)
+        public IActionResult AcceptComment([FromHeader] string token, int id, int commentId)
         {
             using (var db = new StackUnderflowContext())
             {
