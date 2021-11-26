@@ -4,6 +4,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Cors;
 using StackUnderflow.Entities;
 using Microsoft.EntityFrameworkCore;
+using JWT.Builder;
+using JWT.Algorithms;
 
 namespace StackUnderflow.Controllers
 {
@@ -12,6 +14,7 @@ namespace StackUnderflow.Controllers
     [EnableCors]
     public class PostController : ControllerBase
     {
+        
         [HttpGet]
         public ActionResult<Post> GetPosts([FromHeader] string token)
         {
@@ -56,9 +59,10 @@ namespace StackUnderflow.Controllers
         [HttpPost]
         public IActionResult CreatePost([FromHeader] string token, Post post)
         {
+
             using (var db = new StackUnderflowContext())
             {
-                var user = db.Users.FirstOrDefault(user => user.Id == 1);
+                var user = db.Users.FirstOrDefault(user => user.Username == GetUsernameFromJWT(token));
 
                 post.Creator = user;
                 post.TimeStamp = DateTime.Now;
@@ -101,7 +105,7 @@ namespace StackUnderflow.Controllers
             using (var db = new StackUnderflowContext())
             {
                 post = db.Posts.Include(post => post.Comments).ThenInclude(comment => comment.Creator).FirstOrDefault(post => post.Id == id);
-                var user = db.Users.FirstOrDefault(user => user.Id == 1);//user => user.Username == HttpContext.User.Claims.First().Value);
+                var user = db.Users.FirstOrDefault(user => user.Username == GetUsernameFromJWT(token));
 
                 if (user == null || post == null)
                 {
@@ -124,7 +128,7 @@ namespace StackUnderflow.Controllers
         {
             using (var db = new StackUnderflowContext())
             {
-                var user = db.Users.FirstOrDefault(user => user.Id == 1);
+                var user = db.Users.FirstOrDefault(user => user.Username == GetUsernameFromJWT(token));
                 var comment = db.Comments
                     .Include(c => c.Votes)
                     .FirstOrDefault(c => c.Id == id);
@@ -146,7 +150,7 @@ namespace StackUnderflow.Controllers
 
             using (var db = new StackUnderflowContext())
             {
-                var user = db.Users.FirstOrDefault(user => user.Id == 1);
+               
                 var comment = db.Comments
                     .Include(c => c.Votes)
                     .FirstOrDefault(c => c.Id == id);
@@ -176,6 +180,17 @@ namespace StackUnderflow.Controllers
 
                 return Ok(comment);
             }
+        }
+
+        private string GetUsernameFromJWT(string token)
+        {
+           
+            return JwtBuilder.Create()
+                    .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
+                    .WithSecret("pdtxgsvrniydxeawhonytzxuysmhajff")
+                    .MustVerifySignature()
+                    .Decode(token);
+
         }
     }
 }
