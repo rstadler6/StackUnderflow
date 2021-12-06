@@ -13,6 +13,7 @@ using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Primitives;
 
@@ -25,21 +26,13 @@ namespace StackUnderflow.Controllers
     {
         
         [HttpGet]
-        public ActionResult<Post> GetPosts([FromHeader] string token)
+        public IActionResult GetPosts([FromHeader] string token)
         {
             var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
 
             using (var db = new StackUnderflowContext())
             {
@@ -64,17 +57,9 @@ namespace StackUnderflow.Controllers
         {
             var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
 
             using (var db = new StackUnderflowContext())
             {
@@ -98,21 +83,14 @@ namespace StackUnderflow.Controllers
         {
             var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
+            var username = ((OkObjectResult)usernameResult).Value as string;
 
             using (var db = new StackUnderflowContext())
             {
-                var user = db.Users.FirstOrDefault(user => user.Username == GetUsernameFromJWT(token));
+                var user = db.Users.FirstOrDefault(user => user.Username == username);
 
                 post.Creator = user;
                 post.TimeStamp = DateTime.Now;
@@ -126,21 +104,13 @@ namespace StackUnderflow.Controllers
 
         [HttpGet]
         [Route("{id}/comments")]
-        public ActionResult<Comment> GetComments([FromHeader] string token, int id)
+        public IActionResult GetComments([FromHeader] string token, int id)
         {
             var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
 
             using (var db = new StackUnderflowContext())
             {
@@ -167,22 +137,15 @@ namespace StackUnderflow.Controllers
             var tokenValue = GetTokenValue(token);
             Post post;
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
+            var username = ((OkObjectResult)usernameResult).Value as string;
 
             using (var db = new StackUnderflowContext())
             {
                 post = db.Posts.Include(post => post.Comments).ThenInclude(comment => comment.Creator).FirstOrDefault(post => post.Id == id);
-                var user = db.Users.FirstOrDefault(user => user.Username == GetUsernameFromJWT(token));
+                var user = db.Users.FirstOrDefault(user => user.Username == username);
 
                 if (user == null || post == null)
                 {
@@ -205,21 +168,14 @@ namespace StackUnderflow.Controllers
         {
             var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
+            var username = ((OkObjectResult) usernameResult).Value as string;
 
             using (var db = new StackUnderflowContext())
             {
-                var user = db.Users.FirstOrDefault(user => user.Username == GetUsernameFromJWT(token));
+                var user = db.Users.FirstOrDefault(user => user.Username == username);
                 var comment = db.Comments
                     .Include(c => c.Votes)
                     .FirstOrDefault(c => c.Id == id);
@@ -240,17 +196,9 @@ namespace StackUnderflow.Controllers
             var tokenValue = GetTokenValue(token);
             int result;
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
 
             using (var db = new StackUnderflowContext())
             {
@@ -272,17 +220,9 @@ namespace StackUnderflow.Controllers
         {
             var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
-            {
-                return BadRequest(new RegistrationResponse()
-                {
-                    ErrorList = new List<string>()
-                        {
-                            "Invalid login request"
-                        },
-                    Success = false
-                });
-            }
+            var usernameResult = GetUsernameFromJWT(tokenValue);
+            if (usernameResult is BadRequestObjectResult)
+                return usernameResult;
 
             using (var db = new StackUnderflowContext())
             {
@@ -300,18 +240,25 @@ namespace StackUnderflow.Controllers
             }
         }
 
-        private string GetUsernameFromJWT(string token)
+        private IActionResult GetUsernameFromJWT(string token)
         {
             try
             {
-                return JwtBuilder.Create()
+                return Ok(JwtBuilder.Create()
                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
                     .WithSecret("pdtxgsvrniydxeawhonytzxuysmhajff")
                     .MustVerifySignature()
-                    .Decode(token);
+                    .Decode(token));
             } catch (Exception ex)
             {
-                return "BadRequest";
+                return BadRequest(new RegistrationResponse()
+                {
+                    ErrorList = new List<string>()
+                    {
+                        "Invalid JWT"
+                    },
+                    Success = false
+                });
             }
         }
 
