@@ -6,16 +6,12 @@ using StackUnderflow.Entities;
 using Microsoft.EntityFrameworkCore;
 using JWT.Builder;
 using JWT.Algorithms;
-using System.Net;
 using System.Web.Http;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Net.WebSockets;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Primitives;
 
 namespace StackUnderflow.Controllers
 {
