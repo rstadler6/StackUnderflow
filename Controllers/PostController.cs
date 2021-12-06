@@ -12,6 +12,9 @@ using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Primitives;
 
 namespace StackUnderflow.Controllers
 {
@@ -24,7 +27,9 @@ namespace StackUnderflow.Controllers
         [HttpGet]
         public ActionResult<Post> GetPosts([FromHeader] string token)
         {
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            var tokenValue = GetTokenValue(token);
+
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -57,7 +62,9 @@ namespace StackUnderflow.Controllers
         [Route("{id}")]
         public IActionResult GetPost([FromHeader] string token, int id)
         {
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            var tokenValue = GetTokenValue(token);
+
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -89,7 +96,9 @@ namespace StackUnderflow.Controllers
         [HttpPost]
         public IActionResult CreatePost([FromHeader] string token, Post post)
         {
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            var tokenValue = GetTokenValue(token);
+
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -119,7 +128,9 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comments")]
         public ActionResult<Comment> GetComments([FromHeader] string token, int id)
         {
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            var tokenValue = GetTokenValue(token);
+
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -153,9 +164,10 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comment")]
         public IActionResult Comment([FromHeader] string token, int id, Comment comment)
         {
+            var tokenValue = GetTokenValue(token);
             Post post;
 
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -191,7 +203,9 @@ namespace StackUnderflow.Controllers
         [Route("{id}/vote")]
         public IActionResult Vote([FromHeader] string token, int id, Vote vote)
         {
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            var tokenValue = GetTokenValue(token);
+
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -223,9 +237,10 @@ namespace StackUnderflow.Controllers
         [Route("{id}/vote")]
         public IActionResult GetVotes([FromHeader] string token, int id)
         {
+            var tokenValue = GetTokenValue(token);
             int result;
 
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -255,8 +270,9 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comments/accept/{commentId}")]
         public IActionResult AcceptComment([FromHeader] string token, int id, int commentId)
         {
+            var tokenValue = GetTokenValue(token);
 
-            if (GetUsernameFromJWT(token) == "BadRequest")
+            if (GetUsernameFromJWT(tokenValue) == "BadRequest")
             {
                 return BadRequest(new RegistrationResponse()
                 {
@@ -286,7 +302,7 @@ namespace StackUnderflow.Controllers
 
         private string GetUsernameFromJWT(string token)
         {
-           try
+            try
             {
                 return JwtBuilder.Create()
                     .WithAlgorithm(new HMACSHA256Algorithm()) // symmetric
@@ -299,6 +315,11 @@ namespace StackUnderflow.Controllers
             }
         }
 
-               
+        private string GetTokenValue(string token)
+        {
+            var regex = new Regex("{\\\"token\\\":\\\"([^\"]*)(?=\\\")");
+            return regex.Match(token).Groups[1].Value;
+
+        }
     }
 }
