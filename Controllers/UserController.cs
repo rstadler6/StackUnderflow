@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using StackUnderflow.Entities;
 using StackUnderflow.Configuration;
 using Microsoft.Extensions.Options;
+using System.Threading;
 
 namespace StackUnderflow.Controllers
 {
@@ -18,9 +19,9 @@ namespace StackUnderflow.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly JwtConfig _jwtConfig;
-        private readonly List<JwtValues> _jwtList;
+        private readonly List<string> _jwtList;
 
-        public UserController(IOptionsMonitor<JwtConfig> optionsMonitor, ILogger<UserController> logger, List<JwtValues> jwtList)
+        public UserController(IOptionsMonitor<JwtConfig> optionsMonitor, ILogger<UserController> logger, List<string> jwtList)
         {
             _jwtConfig = optionsMonitor.CurrentValue; 
             _logger = logger;
@@ -98,6 +99,16 @@ namespace StackUnderflow.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("/logout")]
+        public IActionResult Logout([FromHeader] string token)
+        {
+            _logger.LogInformation($"Logged out: {token}");
+            _jwtList.Remove(token);
+
+            return Ok();
+        }
+
         private string GenerateToken(string username, int expireHours = 1)
         {
             var token = JWT.Builder.JwtBuilder.Create()
@@ -105,8 +116,9 @@ namespace StackUnderflow.Controllers
                       .WithSecret(_jwtConfig.Secret)
                       .AddClaim("exp", DateTimeOffset.UtcNow.AddHours(expireHours).ToUnixTimeSeconds())
                       .AddClaim("user", username)
-                      .
                       .Encode();
+            _jwtList.Add(token);
+
             return token;
         }
     }

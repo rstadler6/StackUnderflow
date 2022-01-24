@@ -22,10 +22,12 @@ namespace StackUnderflow.Controllers
     public class PostController : ControllerBase
     {
         private readonly ILogger<PostController> _logger;
+        private readonly List<string> _jwtList;
 
-        public PostController(ILogger<PostController> logger)
+        public PostController(ILogger<PostController> logger, List<string> jwtList)
         {
             _logger = logger;
+            _jwtList = jwtList;
         }
 
         [HttpGet]
@@ -34,6 +36,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation("GetPosts called");
 
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
             if (usernameResult is BadRequestObjectResult)
@@ -57,6 +61,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation($"GetPost called, id: {id}");
             
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
             if (usernameResult is BadRequestObjectResult)
@@ -85,6 +91,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation($"CreatePost called");
 
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
             if (usernameResult is BadRequestObjectResult)
@@ -112,6 +120,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation($"GetComments called");
 
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
             if (usernameResult is BadRequestObjectResult)
@@ -142,6 +152,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation($"Comment called, PostId: {id}");
 
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
             Post post;
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -175,7 +187,9 @@ namespace StackUnderflow.Controllers
         {
             _logger.LogInformation($"Vote called, PostId: {id}");
 
-            var tokenValue = GetTokenValue(token);
+            var tokenValue = GetTokenValue(token); 
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
             if (usernameResult is BadRequestObjectResult)
@@ -205,6 +219,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation($"GetVotes called, PostId: {id}");
 
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
             int result;
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -232,6 +248,8 @@ namespace StackUnderflow.Controllers
             _logger.LogInformation($"AcceptComment called, PostId: {id}");
 
             var tokenValue = GetTokenValue(token);
+            if (!_jwtList.Contains(tokenValue))
+                return Unauthorized();
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
             if (usernameResult is BadRequestObjectResult)

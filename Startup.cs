@@ -48,7 +48,7 @@ namespace StackUnderflow
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "StackUnderflow", Version = "v1"});
             });
             
-            services.AddSingleton(new List<JwtValues>());
+            services.AddSingleton(new List<string>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
