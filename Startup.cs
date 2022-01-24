@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using StackUnderflow.Configuration;
 using StackUnderflow.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace StackUnderflow
 {
@@ -46,7 +47,8 @@ namespace StackUnderflow
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "StackUnderflow", Version = "v1"});
             });
-
+            
+            services.AddSingleton(new List<JwtValues>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
