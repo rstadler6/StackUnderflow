@@ -12,6 +12,7 @@ using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
 using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace StackUnderflow.Controllers
 {
@@ -20,10 +21,18 @@ namespace StackUnderflow.Controllers
     [EnableCors]
     public class PostController : ControllerBase
     {
-        
+        private readonly ILogger<PostController> _logger;
+
+        public PostController(ILogger<PostController> logger)
+        {
+            _logger = logger;
+        }
+
         [HttpGet]
         public IActionResult GetPosts([FromHeader] string token)
         {
+            _logger.LogInformation("GetPosts called");
+
             var tokenValue = GetTokenValue(token);
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -45,6 +54,8 @@ namespace StackUnderflow.Controllers
         [Route("{id}")]
         public IActionResult GetPost([FromHeader] string token, int id)
         {
+            _logger.LogInformation($"GetPost called, id: {id}");
+            
             var tokenValue = GetTokenValue(token);
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -71,6 +82,8 @@ namespace StackUnderflow.Controllers
         [HttpPost]
         public IActionResult CreatePost([FromHeader] string token, Post post)
         {
+            _logger.LogInformation($"CreatePost called");
+
             var tokenValue = GetTokenValue(token);
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -96,6 +109,8 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comments")]
         public IActionResult GetComments([FromHeader] string token, int id)
         {
+            _logger.LogInformation($"GetComments called");
+
             var tokenValue = GetTokenValue(token);
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -124,6 +139,8 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comment")]
         public IActionResult Comment([FromHeader] string token, int id, Comment comment)
         {
+            _logger.LogInformation($"Comment called, PostId: {id}");
+
             var tokenValue = GetTokenValue(token);
             Post post;
 
@@ -156,6 +173,8 @@ namespace StackUnderflow.Controllers
         [Route("{id}/vote")]
         public IActionResult Vote([FromHeader] string token, int id, Vote vote)
         {
+            _logger.LogInformation($"Vote called, PostId: {id}");
+
             var tokenValue = GetTokenValue(token);
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
@@ -183,6 +202,8 @@ namespace StackUnderflow.Controllers
         [Route("{id}/vote")]
         public IActionResult GetVotes([FromHeader] string token, int id)
         {
+            _logger.LogInformation($"GetVotes called, PostId: {id}");
+
             var tokenValue = GetTokenValue(token);
             int result;
 
@@ -208,6 +229,8 @@ namespace StackUnderflow.Controllers
         [Route("{id}/comments/accept/{commentId}")]
         public IActionResult AcceptComment([FromHeader] string token, int id, int commentId)
         {
+            _logger.LogInformation($"AcceptComment called, PostId: {id}");
+
             var tokenValue = GetTokenValue(token);
 
             var usernameResult = GetUsernameFromJWT(tokenValue);
