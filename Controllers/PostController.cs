@@ -261,8 +261,10 @@ namespace StackUnderflow.Controllers
         private string GetTokenValue(string token)
         {
             var regex = new Regex("{\\\"token\\\":\\\"([^\"]*)(?=\\\")");
-            return regex.Match(token).Groups[1].Value;
 
+            if (regex.IsMatch(token))
+                return regex.Match(token).Groups[1].Value;
+            return token;
         }
     }
 }
