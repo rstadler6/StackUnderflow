@@ -39,6 +39,8 @@ namespace StackUnderflow.Controllers
 
                 if (existingUser == null || existingUser.Password != user.Password)
                 {
+                    Thread.Sleep(3000);
+                   
                     return BadRequest(new RegistrationResponse()
                     {
                         ErrorList = new List<string>() 
