@@ -36,12 +36,6 @@ namespace StackUnderflow.Controllers
                     .Include(post => post.Comments).ThenInclude(comment => comment.Creator)
                     .Include(post => post.Creator).ToList();
 
-
-                if (posts.Count == 0)
-                {
-                    return Problem();
-                }
-
                 return Ok(posts);
             }
             
